@@ -1,0 +1,39 @@
+{
+  "name": "template-mailer-aws-lambda",
+  "version": "0.0.1",
+  "description": "A transactional email mailer that runs on AWS lambda",
+  "main": "TemplateMailer.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "./node_modules/.bin/standard *.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ResourcefulHumans/template-mailer-aws-lambda.git"
+  },
+  "keywords": [
+    "aws",
+    "lambda",
+    "email",
+    "transactional",
+    "javascript"
+  ],
+  "author": "Resourceful Humans <info@resourceful-humans.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ResourcefulHumans/template-mailer-aws-lambda/issues"
+  },
+  "homepage": "https://github.com/ResourcefulHumans/template-mailer-aws-lambda#readme",
+  "dependencies": {
+    "ghooks": "^1.1.1",
+    "simpledb": "^0.2.0",
+    "standard": "^6.0.8",
+    "validate-commit-msg": "^2.5.0"
+  },
+  "config": {
+    "ghooks": {
+      "pre-commit": "npm run lint",
+      "commit-msg": "validate-commit-msg"
+    }
+  }
+}
