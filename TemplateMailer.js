@@ -50,7 +50,7 @@ let handler = function (event, context) {
           return SmtpCredentialRepository.fetch(data.id)
             .then((result) => {
               context.succeed({
-                $context: 'https://jsonld.nametacker.com/SmtpCredentials',
+                $context: 'https://github.com/ResourcefulHumans/template-mailer-aws-lambda/wiki/SmtpCredentials',
                 $id: result.id,
                 dsn: result.dsn,
                 email: result.email,
@@ -81,7 +81,7 @@ let handler = function (event, context) {
           return TemplateRepository.fetch(data.id)
             .then((result) => {
               context.succeed({
-                $context: 'https://jsonld.nametacker.com/Template',
+                $context: 'https://github.com/ResourcefulHumans/template-mailer-aws-lambda/wiki/Template',
                 $id: result.id,
                 subject: result.subject,
                 html: result.html,
