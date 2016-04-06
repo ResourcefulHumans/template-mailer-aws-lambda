@@ -1,0 +1,166 @@
+---
+swagger: "2.0"
+info:
+  version: "2016-04-06T08:14:06Z"
+  title: "TemplateMailer"
+host: "XXXX.execute-api.YYYY.amazonaws.com"
+basePath: "/production"
+schemes:
+- "https"
+paths:
+  /send/{transport}/{template}:
+    post:
+      consumes:
+      - "application/vnd.resourceful-humans.template-mailer-aws-lambda.v1+json"
+      - "application/json"
+      parameters:
+      - name: "template"
+        in: "path"
+        required: true
+        type: "string"
+      - name: "Content-Type"
+        in: "header"
+        required: false
+        type: "string"
+      - name: "transport"
+        in: "path"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "Message"
+        required: true
+        schema:
+          $ref: "#/definitions/Message"
+      responses:
+        201:
+          description: "201 response"
+      security:
+      - api_key: []
+      x-amazon-apigateway-integration:
+        responses:
+          default:
+            statusCode: "201"
+        requestTemplates:
+          application/json: "#set($inputRoot = $input.path('$'))\n{\n  \"operation\"\
+            \ : \"send\",\n  \"payload\": {\n    \"transport\": \"$util.escapeJavaScript($input.params('transport'))\"\
+            ,\n    \"template\": \"$util.escapeJavaScript($input.params('template'))\"\
+            ,\n    \"to\": $input.json('$.to'),\n    \"name\": $input.json('$.name')\n\
+            \  }\n}\n"
+        uri: "arn:aws:apigateway:eu-central-1:lambda:path/2015-03-31/functions/arn:aws:lambda:eu-central-1:ZZZZ:function:TemplateMailer/invocations"
+        httpMethod: "POST"
+        type: "aws"
+  /smtp_credentials/{id}:
+    put:
+      consumes:
+      - "application/vnd.resourceful-humans.template-mailer-aws-lambda.v1+json"
+      - "application/json"
+      parameters:
+      - name: "Content-Type"
+        in: "header"
+        required: false
+        type: "string"
+      - name: "id"
+        in: "path"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "SmtpCredentials"
+        required: true
+        schema:
+          $ref: "#/definitions/SmtpCredentials"
+      responses:
+        204:
+          description: "204 response"
+      security:
+      - api_key: []
+      x-amazon-apigateway-integration:
+        responses:
+          default:
+            statusCode: "204"
+        requestTemplates:
+          application/json: "#set($inputRoot = $input.path('$'))\n{\n  \"operation\"\
+            \ : \"store_smtp_credentials\",\n  \"payload\": {\n    \"id\": \"$util.escapeJavaScript($input.params('id'))\"\
+            ,\n    \"dsn\": $input.json('$.dsn'),\n    \"email\": $input.json('$.email'),\n\
+            \    \"name\": $input.json('$.name'),\n    \"bcc\": $input.json('$.bcc')\n\
+            \  }\n}\n"
+        uri: "arn:aws:apigateway:eu-central-1:lambda:path/2015-03-31/functions/arn:aws:lambda:eu-central-1:ZZZZ:function:TemplateMailer/invocations"
+        httpMethod: "POST"
+        type: "aws"
+  /templates/{id}:
+    put:
+      consumes:
+      - "application/vnd.resourceful-humans.template-mailer-aws-lambda.v1+json"
+      - "application/json"
+      parameters:
+      - name: "Content-Type"
+        in: "header"
+        required: false
+        type: "string"
+      - name: "id"
+        in: "path"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "Template"
+        required: true
+        schema:
+          $ref: "#/definitions/Template"
+      responses:
+        204:
+          description: "204 response"
+      security:
+      - api_key: []
+      x-amazon-apigateway-integration:
+        responses:
+          default:
+            statusCode: "204"
+        requestTemplates:
+          application/json: "#set($inputRoot = $input.path('$')) {   \n\"operation\"\
+            \ : \"store_template\",   \n\"payload\": {     \n    \"id\": \"$util.escapeJavaScript($input.params('id'))\"\
+            ,     \n    \"subject\": $input.json('$.subject'),     \n    \"html\"\
+            : $input.json('$.html'),    \n    \"text\": $input.json('$.text')\n  \
+            \  } }"
+        uri: "arn:aws:apigateway:eu-central-1:lambda:path/2015-03-31/functions/arn:aws:lambda:eu-central-1:ZZZZ:function:TemplateMailer/invocations"
+        httpMethod: "POST"
+        type: "aws"
+securityDefinitions:
+  api_key:
+    type: "apiKey"
+    name: "x-api-key"
+    in: "header"
+definitions:
+  Message:
+    type: "object"
+    properties:
+      template:
+        type: "string"
+      transport:
+        type: "string"
+      name:
+        type: "string"
+      to:
+        type: "string"
+  SmtpCredentials:
+    type: "object"
+    properties:
+      id:
+        type: "string"
+      dsn:
+        type: "string"
+      email:
+        type: "string"
+      name:
+        type: "string"
+      bcc:
+        type: "string"
+  Template:
+    type: "object"
+    properties:
+      id:
+        type: "string"
+      subject:
+        type: "string"
+      html:
+        type: "string"
+      text:
+        type: "string"
