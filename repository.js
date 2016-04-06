@@ -3,13 +3,15 @@
 let Promise = require('bluebird')
 
 /**
- * @param {AWS.SimpleDB} simpledb
- * @param {String} domain
+ * @param {AWS.S3} s3
+ * @param {String} prefix
+ * @param {String} bucket
  * @constructor
  */
-let Repository = function (simpledb, domain) {
-  this.simpledb = simpledb
-  this.domain = domain
+let Repository = function (s3, bucket, prefix) {
+  this.s3 = s3
+  this.prefix = prefix
+  this.bucket = bucket
 }
 
 /**
@@ -19,17 +21,13 @@ let Repository = function (simpledb, domain) {
  */
 Repository.prototype.store = function (id, data) {
   let self = this
-  return Promise.promisify(self.simpledb.putAttributes, {context: self.simpledb})({
-    DomainName: self.domain,
-    ItemName: id,
-    Attributes: [
-      {
-        Name: 'data',
-        Value: JSON.stringify(data),
-        Replace: true
-      }
-    ]
-  })
+  return Promise
+    .promisify(self.s3.putObject, {context: self.s3})({
+      Bucket: self.bucket,
+      Key: self.prefix + '-' + id + '.json',
+      Body: JSON.stringify(data),
+      ContentType: 'applicaton/json'
+    })
 }
 
 /**
@@ -39,16 +37,15 @@ Repository.prototype.store = function (id, data) {
 Repository.prototype.fetch = function (id) {
   let self = this
   return Promise
-    .promisify(self.simpledb.getAttributes, {context: self.simpledb})({
-      DomainName: self.domain,
-      ItemName: id,
-      AttributeNames: ['data']
+    .promisify(self.s3.getObject, {context: self.s3})({
+      Bucket: self.bucket,
+      Key: self.prefix + '-' + id + '.json'
     })
     .then((resp) => {
       if (!resp) {
         return null
       }
-      return JSON.parse(resp.Attributes[0].Value)
+      return JSON.parse(resp.Body)
     })
 }
 

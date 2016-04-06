@@ -13,15 +13,16 @@ let handler = function (event, context) {
   console.log('payload', data)
   console.log('operation', event.operation)
 
-  let simpledb = new AWS.SimpleDB({apiVersion: '2009-04-15', endpoint: 'https://sdb.eu-west-1.amazonaws.com'})
+  let s3 = new AWS.S3({
+    apiVersion: '2006-03-01',
+    endpoint: 'https://s3.eu-central-1.amazonaws.com/',
+    signatureVersion: 'v4'
+  })
 
-  return Promise.join(
-    Promise.promisify(simpledb.createDomain, {context: simpledb})({DomainName: 'template_mailer_smtp_credentials'}),
-    Promise.promisify(simpledb.createDomain, {context: simpledb})({DomainName: 'template_mailer_templates'})
-    )
-    .then(() => {
-      let SmtpCredentialRepository = new Repository(simpledb, 'template_mailer_smtp_credentials')
-      let TemplateRepository = new Repository(simpledb, 'template_mailer_templates')
+  return Promise
+    .try(() => {
+      let SmtpCredentialRepository = new Repository(s3, 'template-mailer', 'smtp_credentials')
+      let TemplateRepository = new Repository(s3, 'template-mailer', 'template')
       switch (operation) {
         case 'store_smtp_credentials':
           if (!data.id || !/^[a-z0-9\-]+$/.test(data.id)) {

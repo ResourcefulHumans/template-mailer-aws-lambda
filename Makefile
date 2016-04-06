@@ -10,7 +10,9 @@ deploy: build/TemplateMailer.zip ## Deploy to AWS lambda
 delete:
 	aws lambda delete-function --region eu-central-1 --function-name TemplateMailer
 
-update: delete deploy
+update: build/TemplateMailer.zip
+	aws lambda update-function-code --region eu-central-1 --function-name TemplateMailer \
+	--zip-file fileb://./build/TemplateMailer.zip
 
 build/TemplateMailer.zip: *.js package.json
 	rm -rf build
