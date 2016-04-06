@@ -4,7 +4,26 @@ let Repository = require('repository')
 let AWS = require('aws-sdk')
 let Promise = require('bluebird')
 let _template = require('lodash/template')
+let _forEach = require('lodash/forEach')
 let nodemailer = require('nodemailer')
+let showdown = require('showdown')
+let converter = new showdown.Converter()
+
+let formatContent = (data) => {
+  if (!(typeof data === 'object')) {
+    return data
+  }
+  if (data['@markdown']) {
+    return {
+      '@text': data['@markdown'],
+      '@html': converter.makeHtml(data['@markdown'])
+    }
+  }
+  _forEach(data, (value, key) => {
+    data[key] = formatContent(value)
+  })
+  return data
+}
 
 let handler = function (event, context) {
   console.log('Received event:', JSON.stringify(event, null, 2))
@@ -124,6 +143,7 @@ let handler = function (event, context) {
                 let templateData = data.templateData
                 subject = _template(template.subject)(templateData)
                 templateData.subject = subject
+                templateData = formatContent(templateData)
                 html = _template(template.html)(templateData)
                 if (template.text) {
                   text = _template(template.text)(templateData)

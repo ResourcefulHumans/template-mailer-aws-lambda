@@ -10,7 +10,7 @@ deploy: build/TemplateMailer.zip ## Deploy to AWS lambda
 delete:
 	aws lambda delete-function --region eu-central-1 --function-name TemplateMailer
 
-update: build/TemplateMailer.zip
+update: build/TemplateMailer.zip ## Update the lambda function with new build
 	aws lambda update-function-code --region eu-central-1 --function-name TemplateMailer \
 	--zip-file fileb://./build/TemplateMailer.zip
 
@@ -19,7 +19,7 @@ build/TemplateMailer.zip: *.js package.json
 	mkdir -p build/node_modules
 	./node_modules/.bin/babel TemplateMailer.js -o build/TemplateMailer.js
 	./node_modules/.bin/babel repository.js -o build/node_modules/repository.js
-	cd build && npm install aws-sdk bluebird lodash nodemailer
+	cd build && npm install aws-sdk bluebird lodash nodemailer showdown
 	rm -f build/TemplateMailer.zip
 	cd build && zip -r TemplateMailer.zip *.js node_modules
 
