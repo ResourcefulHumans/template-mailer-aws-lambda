@@ -1,7 +1,7 @@
 ---
 swagger: "2.0"
 info:
-  version: "2016-04-06T08:14:06Z"
+  version: "2016-04-06T13:28:36Z"
   title: "TemplateMailer"
 host: "XXXX.execute-api.YYYY.amazonaws.com"
 basePath: "/production"
@@ -12,7 +12,6 @@ paths:
     post:
       consumes:
       - "application/vnd.resourceful-humans.template-mailer-aws-lambda.v1+json"
-      - "application/json"
       parameters:
       - name: "template"
         in: "path"
@@ -34,18 +33,31 @@ paths:
       responses:
         201:
           description: "201 response"
+        400:
+          description: "400 response"
+        503:
+          description: "503 response"
+        404:
+          description: "404 response"
       security:
       - api_key: []
       x-amazon-apigateway-integration:
         responses:
+          Unrecognized operation.+:
+            statusCode: "404"
           default:
             statusCode: "201"
+          .+ unavailable .+:
+            statusCode: "503"
+          (Invalid|TemplateError).+:
+            statusCode: "400"
         requestTemplates:
-          application/json: "#set($inputRoot = $input.path('$'))\n{\n  \"operation\"\
-            \ : \"send\",\n  \"payload\": {\n    \"transport\": \"$util.escapeJavaScript($input.params('transport'))\"\
+          application/vnd.resourceful-humans.template-mailer-aws-lambda.v1+json: "#set($inputRoot\
+            \ = $input.path('$'))\n{\n  \"operation\" : \"send\",\n  \"payload\":\
+            \ {\n    \"transport\": \"$util.escapeJavaScript($input.params('transport'))\"\
             ,\n    \"template\": \"$util.escapeJavaScript($input.params('template'))\"\
-            ,\n    \"to\": $input.json('$.to'),\n    \"name\": $input.json('$.name')\n\
-            \  }\n}\n"
+            ,\n    \"to\": $input.json('$.to'),\n    \"name\": $input.json('$.name'),\n\
+            \    \"templateData\": $input.json('$')\n  }\n}\n"
         uri: "arn:aws:apigateway:eu-central-1:lambda:path/2015-03-31/functions/arn:aws:lambda:eu-central-1:ZZZZ:function:TemplateMailer/invocations"
         httpMethod: "POST"
         type: "aws"
@@ -53,7 +65,6 @@ paths:
     put:
       consumes:
       - "application/vnd.resourceful-humans.template-mailer-aws-lambda.v1+json"
-      - "application/json"
       parameters:
       - name: "Content-Type"
         in: "header"
@@ -69,17 +80,30 @@ paths:
         schema:
           $ref: "#/definitions/SmtpCredentials"
       responses:
+        400:
+          description: "400 response"
         204:
           description: "204 response"
+        503:
+          description: "503 response"
+        404:
+          description: "404 response"
       security:
       - api_key: []
       x-amazon-apigateway-integration:
         responses:
+          Unrecognized operation.+:
+            statusCode: "404"
           default:
             statusCode: "204"
+          .+ unavailable .+:
+            statusCode: "503"
+          Invalid.*:
+            statusCode: "400"
         requestTemplates:
-          application/json: "#set($inputRoot = $input.path('$'))\n{\n  \"operation\"\
-            \ : \"store_smtp_credentials\",\n  \"payload\": {\n    \"id\": \"$util.escapeJavaScript($input.params('id'))\"\
+          application/vnd.resourceful-humans.template-mailer-aws-lambda.v1+json: "#set($inputRoot\
+            \ = $input.path('$'))\n{\n  \"operation\" : \"store_smtp_credentials\"\
+            ,\n  \"payload\": {\n    \"id\": \"$util.escapeJavaScript($input.params('id'))\"\
             ,\n    \"dsn\": $input.json('$.dsn'),\n    \"email\": $input.json('$.email'),\n\
             \    \"name\": $input.json('$.name'),\n    \"bcc\": $input.json('$.bcc')\n\
             \  }\n}\n"
@@ -90,7 +114,6 @@ paths:
     put:
       consumes:
       - "application/vnd.resourceful-humans.template-mailer-aws-lambda.v1+json"
-      - "application/json"
       parameters:
       - name: "Content-Type"
         in: "header"
@@ -106,17 +129,30 @@ paths:
         schema:
           $ref: "#/definitions/Template"
       responses:
+        400:
+          description: "400 response"
         204:
           description: "204 response"
+        503:
+          description: "503 response"
+        404:
+          description: "404 response"
       security:
       - api_key: []
       x-amazon-apigateway-integration:
         responses:
+          Unrecognized operation.+:
+            statusCode: "404"
           default:
             statusCode: "204"
+          .+ unavailable .+:
+            statusCode: "503"
+          Invalid.*:
+            statusCode: "400"
         requestTemplates:
-          application/json: "#set($inputRoot = $input.path('$')) {   \n\"operation\"\
-            \ : \"store_template\",   \n\"payload\": {     \n    \"id\": \"$util.escapeJavaScript($input.params('id'))\"\
+          application/vnd.resourceful-humans.template-mailer-aws-lambda.v1+json: "#set($inputRoot\
+            \ = $input.path('$')) {   \n\"operation\" : \"store_template\",   \n\"\
+            payload\": {     \n    \"id\": \"$util.escapeJavaScript($input.params('id'))\"\
             ,     \n    \"subject\": $input.json('$.subject'),     \n    \"html\"\
             : $input.json('$.html'),    \n    \"text\": $input.json('$.text')\n  \
             \  } }"
