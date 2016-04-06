@@ -1,5 +1,8 @@
 # template-mailer-aws-lambda
 
+[![monitored by greenkeeper.io](https://img.shields.io/badge/greenkeeper.io-monitored-brightgreen.svg)](http://greenkeeper.io/) 
+[![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg)](http://standardjs.com/)
+
 A transactional email mailer that runs on AWS lambda.
 
 ## Setup
