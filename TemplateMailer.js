@@ -121,10 +121,12 @@ let handler = function (event, context) {
               let html
               let text
               return Promise.try(function () {
-                subject = _template(template.subject)(data)
-                html = _template(template.html)(data)
+                let templateData = data.templateData
+                subject = _template(template.subject)(templateData)
+                templateData.subject = subject
+                html = _template(template.html)(templateData)
                 if (template.text) {
-                  text = _template(template.text)(data)
+                  text = _template(template.text)(templateData)
                 }
               }).then(() => {
                 return Promise
