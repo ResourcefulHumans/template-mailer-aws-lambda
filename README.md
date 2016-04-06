@@ -35,5 +35,22 @@ Send an email using the transport `bar` and the template `foo`:
     -H 'Content-Type: application/vnd.resourceful-humans.template-mailer-aws-lambda.v1+json; charset=utf-8' \
     --data '{"to":"john.doe@example.com","name":"John Doe"}'
 
-The `subject` and the `html` part of the template will be parsed through [lodash's template function](https://lodash.com/docs#template)
+## Templates
+
+The `subject`, `html` and `text` part of the template will be parsed through [lodash's template function](https://lodash.com/docs#template)
 with the data provided in the `body` of this request.
+
+You can provide the data with a formatter hint:
+
+    "subject": {
+      "@markdown": "This will be parsed with *markdown*"
+    }
+    
+it will parsed into 
+
+    "subject": {
+      "@text": "This will be parsed with *markdown*",                // the original value
+      "@html": "This will be parsed with <strong>markdown</strong>"  // the HTML result
+    }
+
+and can be access in the template accordingly.
