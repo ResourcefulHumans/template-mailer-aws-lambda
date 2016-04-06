@@ -50,6 +50,9 @@ let handler = function (event, context) {
           }
           return SmtpCredentialRepository.fetch(data.id)
             .then((result) => {
+              if (!result) {
+                throw new Error('Credentials not found: ' + data.id)
+              }
               context.succeed({
                 $context: 'https://github.com/ResourcefulHumans/template-mailer-aws-lambda/wiki/SmtpCredentials',
                 $id: result.id,
@@ -81,6 +84,9 @@ let handler = function (event, context) {
           }
           return TemplateRepository.fetch(data.id)
             .then((result) => {
+              if (!result) {
+                throw new Error('Template not found: ' + data.id)
+              }
               context.succeed({
                 $context: 'https://github.com/ResourcefulHumans/template-mailer-aws-lambda/wiki/Template',
                 $id: result.id,
@@ -173,15 +179,19 @@ let handler = function (event, context) {
                         error: err
                       }
                     )
-                    context.fail(err)
+                    throw err
                   })
               })
             })
         default:
-          context.fail(new Error('Unrecognized operation "' + operation + '"'))
+          throw new Error('Unrecognized operation "' + operation + '"')
       }
     }).catch((err) => {
-      context.fail(err)
+      if (err.name === 'ReferenceError') {
+        context.fail(new Error('TemplateError: ' + err.message))
+      } else {
+        context.fail(err)
+      }
     })
 }
 
