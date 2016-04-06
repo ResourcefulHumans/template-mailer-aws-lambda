@@ -1,6 +1,5 @@
 'use strict'
 
-let _trimStart = require('lodash/trimStart')
 let Promise = require('bluebird')
 
 /**
@@ -39,12 +38,16 @@ Repository.prototype.store = function (id, data) {
  */
 Repository.prototype.fetch = function (id) {
   let self = this
-  return Promise.promisify(self.simpledb.getAttributes, {context: self.simpledb})({
+  return Promise
+    .promisify(self.simpledb.getAttributes, {context: self.simpledb})({
       DomainName: self.domain,
       ItemName: id,
       AttributeNames: ['data']
     })
     .then((resp) => {
+      if (!resp) {
+        return null
+      }
       return JSON.parse(resp.Attributes[0].Value)
     })
 }

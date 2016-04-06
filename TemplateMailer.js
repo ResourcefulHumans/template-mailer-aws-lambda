@@ -7,13 +7,11 @@ let _template = require('lodash/template')
 let nodemailer = require('nodemailer')
 
 let handler = function (event, context) {
-
   console.log('Received event:', JSON.stringify(event, null, 2))
-  console.log('operation', event.operation)
   let data = event.payload
+  let operation = event.operation
   console.log('payload', data)
-
-  console.log('Creating SimpleDB domains … ')
+  console.log('operation', event.operation)
 
   let simpledb = new AWS.SimpleDB({apiVersion: '2009-04-15', endpoint: 'https://sdb.eu-west-1.amazonaws.com'})
 
@@ -22,10 +20,9 @@ let handler = function (event, context) {
     Promise.promisify(simpledb.createDomain, {context: simpledb})({DomainName: 'template_mailer_templates'})
     )
     .then(() => {
-      console.log('Done creating SimpleDB domains.')
       let SmtpCredentialRepository = new Repository(simpledb, 'template_mailer_smtp_credentials')
       let TemplateRepository = new Repository(simpledb, 'template_mailer_templates')
-      switch (event.operation) {
+      switch (operation) {
         case 'store_smtp_credentials':
           if (!data.id || !/^[a-z0-9\-]+$/.test(data.id)) {
             throw new Error('Invalid id: ' + data.id)
@@ -44,9 +41,8 @@ let handler = function (event, context) {
           }
           return SmtpCredentialRepository.store(data.id, data)
             .then(() => {
-              context.succeed('Stored');
+              context.succeed('Stored')
             })
-          break
         case 'get_smtp_credentials':
           if (!data.id || !/^[a-z0-9\-]+$/.test(data.id)) {
             throw new Error('Invalid id: ' + data.id)
@@ -61,7 +57,6 @@ let handler = function (event, context) {
                 name: result.name
               })
             })
-          break
         case 'store_template':
           if (!data.id || !/^[a-z0-9\-]+$/.test(data.id)) {
             throw new Error('Invalid id: ' + data.id)
@@ -77,9 +72,8 @@ let handler = function (event, context) {
           }
           return TemplateRepository.store(data.id, data)
             .then(() => {
-              context.succeed('Stored');
+              context.succeed('Stored')
             })
-          break
         case 'get_template':
           if (!data.id || !/^[a-z0-9\-]+$/.test(data.id)) {
             throw new Error('Invalid id: ' + data.id)
@@ -94,7 +88,6 @@ let handler = function (event, context) {
                 text: result.text
               })
             })
-          break
         case 'send':
           if (!data.transport || !/^[a-z0-9\-]+$/.test(data.transport)) {
             throw new Error('Invalid transport: ' + data.transport)
@@ -117,27 +110,31 @@ let handler = function (event, context) {
                 throw new Error('Transport or Template not found')
               }
               // Try to apply template
-              var subject
-              var html
+              let subject
+              let html
+              let text
               return Promise.try(function () {
                 subject = _template(template.subject)(data)
                 html = _template(template.html)(data)
+                if (template.text) {
+                  text = _template(template.text)(data)
+                }
               }).then(() => {
-                return Promise.try(function () {
-                    console.log('Sending mail to "' + data.to + '" template: "' + data.template + '" via "' + data.transport + '"', data)
-                    var headers = {}
+                return Promise
+                  .try(function () {
+                    let headers = {}
                     headers['X-template-mailer-aws-lambda'] = 'v1'
-                    var dsn = transport.dsn.match(/^([a-z]+):\/\/([^:]+):([^@]+)@([^:]+):(\d+)$/)
-                    var nodemailerConfig = {
+                    let dsn = transport.dsn.match(/^([a-z]+):\/\/([^:]+):([^@]+)@([^:]+):(\d+)$/)
+                    let nodemailerConfig = {
                       host: dsn[4],
                       auth: {
-                        user: dsn[2],
-                        pass: dsn[3]
+                        user: decodeURIComponent(dsn[2]),
+                        pass: decodeURIComponent(dsn[3])
                       },
                       port: dsn[5],
-                      secure: dsn[1] === 'ssl'
+                      secure: dsn[1] === ('smtps' || 'ssl')
                     }
-                    var transporter = nodemailer.createTransport(
+                    let transporter = nodemailer.createTransport(
                       nodemailerConfig,
                       {
                         from: '"' + transport.name + '" <' + transport.email + '>',
@@ -146,13 +143,16 @@ let handler = function (event, context) {
                     )
                     // Send mail
                     Promise.promisifyAll(transporter)
-                    var mailConfig = {
+                    let mailConfig = {
                       to: '"' + data.name + '" <' + data.to + '>',
                       subject: subject,
                       html: html
                     }
                     if (transport.bcc) {
                       mailConfig.bcc = transport.bcc
+                    }
+                    if (text) {
+                      mailConfig.text = text
                     }
                     return transporter.sendMailAsync(mailConfig)
                   })
@@ -162,7 +162,7 @@ let handler = function (event, context) {
                       '" template: "' + data.template + '" via "' + data.transport + '"',
                       {body: data}
                     )
-                    context.suceed('Sent')
+                    context.succeed('Sent')
                   })
                   .catch(function (err) {
                     console.error('Failed to send mail to "' + data.to + '" template: "' + data.template +
@@ -176,7 +176,6 @@ let handler = function (event, context) {
                   })
               })
             })
-          break;
         default:
           context.fail(new Error('Unrecognized operation "' + operation + '"'))
       }

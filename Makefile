@@ -3,7 +3,6 @@
 
 deploy: build/TemplateMailer.zip ## Deploy to AWS lambda
 	aws lambda create-function --region eu-central-1 --function-name TemplateMailer \
-	--vpc-config SubnetIds=$(SUBNETS),SecurityGroupIds=$(SECURITYGROUPS) \
 	--zip-file fileb://./build/TemplateMailer.zip --role $(ROLE) \
 	--timeout 60 \
 	--handler TemplateMailer.lambda_handler --runtime nodejs
