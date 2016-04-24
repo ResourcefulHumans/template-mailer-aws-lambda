@@ -127,9 +127,10 @@ let handler = function (event, context) {
           if (!data.to || !/.+@.+/.test(data.to)) {
             throw new Error('Invalid email: ' + data.to)
           }
-          return Promise.join(
-            SmtpCredentialRepository.fetch(data.transport),
-            TemplateRepository.fetch(data.template)
+          return Promise
+            .join(
+              SmtpCredentialRepository.fetch(data.transport),
+              TemplateRepository.fetch(data.template)
             )
             .spread((transport, template) => {
               if (!transport || !template) {
@@ -139,71 +140,73 @@ let handler = function (event, context) {
               let subject
               let html
               let text
-              return Promise.try(function () {
-                let templateData = data.templateData
-                subject = _template(template.subject)(templateData)
-                templateData.subject = subject
-                templateData = formatContent(templateData)
-                html = _template(template.html)(templateData)
-                if (template.text) {
-                  text = _template(template.text)(templateData)
-                }
-              }).then(() => {
-                return Promise
-                  .try(function () {
-                    let headers = {}
-                    headers['X-template-mailer-aws-lambda'] = 'v1'
-                    let dsn = transport.dsn.match(/^([a-z]+):\/\/([^:]+):([^@]+)@([^:]+):(\d+)$/)
-                    let nodemailerConfig = {
-                      host: dsn[4],
-                      auth: {
-                        user: decodeURIComponent(dsn[2]),
-                        pass: decodeURIComponent(dsn[3])
-                      },
-                      port: dsn[5],
-                      secure: dsn[1] === ('smtps' || 'ssl')
-                    }
-                    let transporter = nodemailer.createTransport(
-                      nodemailerConfig,
-                      {
-                        from: '"' + transport.name + '" <' + transport.email + '>',
-                        headers: headers
+              return Promise
+                .try(function () {
+                  let templateData = data.templateData
+                  subject = _template(template.subject)(templateData)
+                  templateData.subject = subject
+                  templateData = formatContent(templateData)
+                  html = _template(template.html)(templateData)
+                  if (template.text) {
+                    text = _template(template.text)(templateData)
+                  }
+                })
+                .then(() => {
+                  return Promise
+                    .try(function () {
+                      let headers = {}
+                      headers['X-template-mailer-aws-lambda'] = 'v1'
+                      let dsn = transport.dsn.match(/^([a-z]+):\/\/([^:]+):([^@]+)@([^:]+):(\d+)$/)
+                      let nodemailerConfig = {
+                        host: dsn[4],
+                        auth: {
+                          user: decodeURIComponent(dsn[2]),
+                          pass: decodeURIComponent(dsn[3])
+                        },
+                        port: dsn[5],
+                        secure: dsn[1] === ('smtps' || 'ssl')
                       }
-                    )
-                    // Send mail
-                    Promise.promisifyAll(transporter)
-                    let mailConfig = {
-                      to: '"' + data.name + '" <' + data.to + '>',
-                      subject: subject,
-                      html: html
-                    }
-                    if (transport.bcc) {
-                      mailConfig.bcc = transport.bcc
-                    }
-                    if (text) {
-                      mailConfig.text = text
-                    }
-                    return transporter.sendMailAsync(mailConfig)
-                  })
-                  .then(function () {
-                    console.log(
-                      'Successfully send mail to "' + data.to +
-                      '" template: "' + data.template + '" via "' + data.transport + '"',
-                      {body: data}
-                    )
-                    context.succeed('Sent')
-                  })
-                  .catch(function (err) {
-                    console.error('Failed to send mail to "' + data.to + '" template: "' + data.template +
-                      '" via "' + data.transport + '"',
-                      {
-                        body: data,
-                        error: err
+                      let transporter = nodemailer.createTransport(
+                        nodemailerConfig,
+                        {
+                          from: '"' + transport.name + '" <' + transport.email + '>',
+                          headers: headers
+                        }
+                      )
+                      // Send mail
+                      Promise.promisifyAll(transporter)
+                      let mailConfig = {
+                        to: '"' + data.name + '" <' + data.to + '>',
+                        subject: subject,
+                        html: html
                       }
-                    )
-                    throw err
-                  })
-              })
+                      if (transport.bcc) {
+                        mailConfig.bcc = transport.bcc
+                      }
+                      if (text) {
+                        mailConfig.text = text
+                      }
+                      return transporter.sendMailAsync(mailConfig)
+                    })
+                    .then(function () {
+                      console.log(
+                        'Successfully send mail to "' + data.to +
+                        '" template: "' + data.template + '" via "' + data.transport + '"',
+                        {body: data}
+                      )
+                      context.succeed('Sent')
+                    })
+                })
+                .catch(function (err) {
+                  console.error('Failed to send mail to "' + data.to + '" template: "' + data.template +
+                    '" via "' + data.transport + '"',
+                    {
+                      body: data,
+                      error: err
+                    }
+                  )
+                  throw err
+                })
             })
         default:
           throw new Error('Unrecognized operation "' + operation + '"')
