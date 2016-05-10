@@ -7,7 +7,11 @@ let _template = require('lodash/template')
 let _forEach = require('lodash/forEach')
 let nodemailer = require('nodemailer')
 let showdown = require('showdown')
-let converter = new showdown.Converter()
+let converter = new showdown.Converter({
+  simplifiedAutoLink: true,
+  strikethrough: true,
+  tables: true
+})
 
 let formatContent = (data) => {
   if (!(typeof data === 'object')) {
