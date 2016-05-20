@@ -150,6 +150,7 @@ let handler = function (event, context) {
                   subject = _template(template.subject)(templateData)
                   templateData.subject = subject
                   templateData = formatContent(templateData)
+                  templateData._ = require('lodash')
                   html = _template(template.html)(templateData)
                   if (template.text) {
                     text = _template(template.text)(templateData)
