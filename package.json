@@ -31,7 +31,7 @@
     "lodash": "^4.13.1",
     "nodemailer": "^2.4.2",
     "showdown": "^1.4.2",
-    "snyk": "^1.16.1"
+    "snyk": "^1.17.0"
   },
   "config": {
     "ghooks": {
