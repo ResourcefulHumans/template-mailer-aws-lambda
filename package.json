@@ -25,7 +25,7 @@
   },
   "homepage": "https://github.com/ResourcefulHumans/template-mailer-aws-lambda#readme",
   "dependencies": {
-    "aws-sdk": "^2.4.5",
+    "aws-sdk": "^2.4.6",
     "bluebird": "^3.4.1",
     "joi": "^8.4.2",
     "lodash": "^4.13.1",
