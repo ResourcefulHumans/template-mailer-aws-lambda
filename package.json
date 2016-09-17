@@ -5,7 +5,7 @@
   "main": "TemplateMailer.js",
   "scripts": {
     "test": "snyk test",
-    "lint": "./node_modules/.bin/standard *.js"
+    "lint": "standard *.js"
   },
   "repository": {
     "type": "git",
