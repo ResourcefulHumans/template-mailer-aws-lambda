@@ -43,7 +43,7 @@
     "babel-cli": "^6.14.0",
     "babel-preset-es2015": "^6.14.0",
     "ghooks": "^1.3.2",
-    "standard": "^8.0.0",
+    "standard": "^8.1.0",
     "validate-commit-msg": "^2.8.0"
   }
 }
