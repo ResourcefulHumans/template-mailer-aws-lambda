@@ -29,7 +29,7 @@
     "bluebird": "^3.4.6",
     "joi": "^9.0.4",
     "lodash": "^4.16.1",
-    "nodemailer": "^2.6.0",
+    "nodemailer": "^2.6.4",
     "showdown": "^1.4.3",
     "snyk": "^1.19.1"
   },
