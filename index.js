@@ -23,6 +23,9 @@ exports.handler = (event, context, callback) => {
 
   Promise
     .try(() => {
+      if (event.headers === null || !event.headers['Content-Type']) {
+        throw new Error('Must provide Content-Type')
+      }
       if (event.headers['Content-Type'] !== CONTENT_TYPE) {
         throw new Error('Unsupported content type: "' + event.headers['Content-Type'] + '"')
       }
