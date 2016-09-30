@@ -18,29 +18,29 @@ Run
 
 to publish the lambda function. You should adapt the S3 bucket name.
 
-Then setup an API Gateway with the provided [api-gateway-swagger.yaml](/api-gateway-swagger.yaml)
+Then setup an [API Gateway Lamdba Proxy](http://docs.aws.amazon.com/apigateway/latest/developerguide/integrating-api-with-aws-services-lambda.html).
 
 ## Init configuration
 
 Create the template `foo`:
 
-    curl -v -X PUT https://XXXX.execute-api.YYYY.amazonaws.com/production/templates/templates/foo \
+    curl -v -X PUT https://XXXX.execute-api.YYYY.amazonaws.com/production/templates/foo \
     -H 'X-API-Key: ????' \
-    -H 'Content-Type: application/vnd.resourceful-humans.template-mailer-aws-lambda.v1+json; charset=utf-8' \
+    -H 'Content-Type: application/vnd.resourceful-humans.template-mailer-aws-lambda.v2+json; charset=utf-8' \
     --data '{"subject":"Mail for <%= name %>","html":"Hello <%= name %>"}'
 
-Create the SMTP transport `bar`:
+Create the transport `bar`:
 
-    curl -v -X PUT https://XXXX.execute-api.YYYY.amazonaws.com/production/smtp_credentials/bar \
+    curl -v -X PUT https://XXXX.execute-api.YYYY.amazonaws.com/production/transport/bar \
     -H 'X-API-Key: ????' \
-    -H 'Content-Type: application/vnd.resourceful-humans.template-mailer-aws-lambda.v1+json; charset=utf-8' \
-    --data '{"dsn":"smtp://john:doe@example.com:25","email":"info@example.com","name":"Example Inc."}'
+    -H 'Content-Type: application/vnd.resourceful-humans.template-mailer-aws-lambda.v2+json; charset=utf-8' \
+    --data '{"email":"info@example.com","name":"Example Inc."}'
 
 Send an email using the transport `bar` and the template `foo`:
     
     curl -v -X POST https://XXXX.execute-api.YYYY.amazonaws.com/production/send/bar/foo \
     -H 'X-API-Key: ????' \
-    -H 'Content-Type: application/vnd.resourceful-humans.template-mailer-aws-lambda.v1+json; charset=utf-8' \
+    -H 'Content-Type: application/vnd.resourceful-humans.template-mailer-aws-lambda.v2+json; charset=utf-8' \
     --data '{"to":"john.doe@example.com","name":"John Doe"}'
 
 ## Templates
