@@ -9,10 +9,11 @@ const AWS = require('aws-sdk')
 const CONTENT_TYPE = 'application/vnd.resourceful-humans.template-mailer-aws-lambda.v2+json; charset=utf-8'
 
 exports.handler = (event, context, callback) => {
+  let statusCode = 200
   const done = (err, res) => {
     if (err) console.error(err)
     return callback(null, {
-      statusCode: err ? '400' : (res ? '200' : '204'),
+      statusCode: err ? 400 : (res ? statusCode : 204),
       body: err ? err.message : JSON.stringify(res),
       headers: {
         'Content-Type': CONTENT_TYPE
@@ -66,6 +67,10 @@ exports.handler = (event, context, callback) => {
         switch (event.httpMethod) {
           case 'POST':
             return sendOperations.send(ses, TransportRepository, TemplateRepository, transport, template, body)
+              .then(res => {
+                statusCode = 202
+                return res
+              })
           default:
             throw new Error(`Unsupported action "${event.httpMethod}" for sending`)
         }
