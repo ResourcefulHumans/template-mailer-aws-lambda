@@ -33,11 +33,10 @@ const send = (ses, transportRepo, templateRepo, transport, template, body) => {
     transport: Joi.string().required().regex(/^[a-z0-9]+(?!-+$)[a-z0-9-]*$/).lowercase(),
     template: Joi.string().required().regex(/^[a-z0-9]+(?!-+$)[a-z0-9-]*$/).lowercase(),
     to: Joi.string().email().required(),
-    name: Joi.string().required().trim(),
-    templateData: Joi.object()
+    name: Joi.string().required().trim()
   })
   const data = _merge({}, {transport, template}, body)
-  let v = Joi.validate(data, schema)
+  let v = Joi.validate(data, schema, {allowUnknown: true})
   if (v.error) {
     throw new Error('Validation failed: ' + v.error)
   }
@@ -52,7 +51,7 @@ const send = (ses, transportRepo, templateRepo, transport, template, body) => {
       }
       // Try to apply template
       let from, to, bcc, subject, html, text
-      let templateData = _merge({}, {to: v.value.to, name: v.value.name}, v.value.templateData)
+      let templateData = v.value
       return Promise
         .try(() => {
           return Promise
