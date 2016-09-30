@@ -1,6 +1,6 @@
 {
   "name": "template-mailer-aws-lambda",
-  "description": "A transactional email mailer that runs on AWS lambda",
+  "description": "A transactional email mailer that runs on AWS lambda and sends emails via SMTP",
   "main": "TemplateMailer.js",
   "scripts": {
     "lint": "standard",
