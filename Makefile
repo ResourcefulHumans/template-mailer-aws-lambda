@@ -2,11 +2,9 @@
 .PHONY: help deploy delete update
 
 FUNCTION_NAME ?= "TemplateMailer2"
-REGION ?= "eu-central-1"
 
 deploy: TemplateMailer.zip ## Deploy to AWS lambda
 	aws lambda create-function \
-	--region $(REGION) \
 	--function-name $(FUNCTION_NAME) \
 	--zip-file fileb://./TemplateMailer.zip \
 	--role $(ROLE) \
@@ -19,12 +17,11 @@ delete:
 
 update: TemplateMailer.zip ## Update the lambda function with new build
 	aws lambda update-function-code \
-	--region $(REGION) \
 	--function-name $(FUNCTION_NAME) \
 	--zip-file fileb://./TemplateMailer.zip
 	rm ./TemplateMailer.zip
 
-TemplateMailer.zip: *.js package.json
+TemplateMailer.zip: *.js package.json config.json
 	zip -r $@ ./
 
 api:

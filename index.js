@@ -7,6 +7,7 @@ const sendOperations = require('./operations/send')
 const Repository = require('./repository')
 const AWS = require('aws-sdk')
 const CONTENT_TYPE = 'application/vnd.resourceful-humans.template-mailer-aws-lambda.v2+json; charset=utf-8'
+const config = require('./config.json')
 
 exports.handler = (event, context, callback) => {
   let statusCode = 200
@@ -32,12 +33,12 @@ exports.handler = (event, context, callback) => {
       const s3 = new AWS.S3({
         apiVersion: '2006-03-01',
         signatureVersion: 'v4',
-        region: 'eu-central-1'
+        region: config.region.s3
       })
       const ses = new AWS.SES({
         apiVersion: '2010-12-01',
         signatureVersion: 'v4',
-        region: 'eu-west-1'
+        region: config.region.ses
       })
       const TransportRepository = new Repository(s3, 'template-mailer', 'transport')
       const TemplateRepository = new Repository(s3, 'template-mailer', 'template')

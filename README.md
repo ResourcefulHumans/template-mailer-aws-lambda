@@ -12,11 +12,17 @@ A transactional email mailer that runs on AWS lambda.
 
 ## Setup
 
+Create a role for the lambda function in IAM.
+
+Create the S3 bucket used by the mailer.
+
+Copy `config.json.dist` to `config.json` and adapt to your needs.
+
 Run 
 
     ROLE="…" make deploy
 
-to publish the lambda function. You should adapt the S3 bucket name.
+to publish the lambda function. You can override the default function name with the environment variable `FUNCTION_NAME`.
 
 Then setup an [API Gateway Lamdba Proxy](http://docs.aws.amazon.com/apigateway/latest/developerguide/integrating-api-with-aws-services-lambda.html).
 
