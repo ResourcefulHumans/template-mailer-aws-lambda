@@ -1,0 +1,7 @@
+{
+  "region": {
+    "s3": "eu-central-1",
+    "ses": "eu-west-1"
+  },
+  "bucket": "template-mailer"
+}
