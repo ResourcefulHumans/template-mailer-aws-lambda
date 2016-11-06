@@ -40,8 +40,8 @@ exports.handler = (event, context, callback) => {
         signatureVersion: 'v4',
         region: config.region.ses
       })
-      const TransportRepository = new Repository(s3, 'template-mailer', 'transport')
-      const TemplateRepository = new Repository(s3, 'template-mailer', 'template')
+      const TransportRepository = new Repository(s3, config.bucket, 'transport')
+      const TemplateRepository = new Repository(s3, config.bucket, 'template')
       const parts = event.path.split('/')
       const body = JSON.parse(event.body)
 

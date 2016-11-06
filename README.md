@@ -12,9 +12,50 @@ A transactional email mailer that runs on AWS lambda.
 
 ## Setup
 
-Create a role for the lambda function in IAM.
+### IAM
+
+Create a role for the lambda function in IAM and attach these policies:
+
+  {
+      "Version": "2012-10-17",
+      "Statement": [
+          {
+              "Sid": "Stmt1459942470000",
+              "Effect": "Allow",
+              "Action": [
+                  "s3:*"
+              ],
+              "Resource": [
+                  "arn:aws:s3:::template-mailer/*"
+              ]
+          }
+      ]
+  }
+  
+*Replace `template-mailer` with your bucket name.
+
+  {
+      "Version": "2012-10-17",
+      "Statement": [
+          {
+              "Sid": "Stmt1475239732000",
+              "Effect": "Allow",
+              "Action": [
+                  "ses:SendEmail",
+                  "ses:SendRawEmail"
+              ],
+              "Resource": [
+                  "*"
+              ]
+          }
+      ]
+  }
+  
+### S3
 
 Create the S3 bucket used by the mailer.
+
+### Lambda
 
 Copy `config.json.dist` to `config.json` and adapt to your needs.
 
@@ -22,7 +63,17 @@ Run
 
     ROLE="…" make deploy
 
-to publish the lambda function. You can override the default function name with the environment variable `FUNCTION_NAME`.
+to publish the lambda function. 
+
+You can override the default function name with the environment variable `FUNCTION_NAME`.
+
+You might also be interested in setting these environment variables for the `aws` CLI:
+
+ - `AWS_ACCESS_KEY_ID`
+ - `AWS_SECRET_ACCESS_KEY`
+ - `AWS_DEFAULT_REGION`
+
+### API Gateway
 
 Then setup an [API Gateway Lamdba Proxy](http://docs.aws.amazon.com/apigateway/latest/developerguide/integrating-api-with-aws-services-lambda.html).
 

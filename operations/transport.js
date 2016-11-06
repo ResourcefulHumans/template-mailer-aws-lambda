@@ -32,7 +32,7 @@ const retrieveConfig = (repo, id) => {
         throw new Error('Config not found: ' + v.value)
       }
       return {
-        $context: 'https://github.com/ResourcefulHumans/config-mailer-aws-lambda/wiki/Config',
+        $context: 'https://github.com/ResourcefulHumans/template-mailer-aws-lambda/wiki/Config',
         $id: result.id,
         email: result.email,
         name: result.name,
