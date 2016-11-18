@@ -26,7 +26,7 @@
   "dependencies": {
     "aws-sdk": "^2.6.15",
     "bluebird": "^3.4.6",
-    "joi": "^9.2.0",
+    "joi": "^10.0.1",
     "lodash": "^4.16.6",
     "nodemailer": "^2.6.4",
     "showdown": "^1.4.4"
