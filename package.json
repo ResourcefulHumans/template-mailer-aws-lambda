@@ -4,7 +4,9 @@
   "main": "TemplateMailer.js",
   "scripts": {
     "lint": "standard",
-    "semantic-release": "semantic-release pre && npm publish && semantic-release post"
+    "semantic-release": "semantic-release pre && npm publish && semantic-release post",
+    "precommit": "npm run lint",
+    "commitmsg": "validate-commit-msg"
   },
   "repository": {
     "type": "git",
@@ -31,14 +33,8 @@
     "nodemailer": "^2.6.4",
     "showdown": "^1.4.4"
   },
-  "config": {
-    "ghooks": {
-      "pre-commit": "npm run lint",
-      "commit-msg": "validate-commit-msg"
-    }
-  },
   "devDependencies": {
-    "ghooks": "^1.3.2",
+    "husky": "<2.0.0",
     "semantic-release": "^6.3.2",
     "standard": "^8.5.0",
     "validate-commit-msg": "^2.8.2"
