@@ -4,7 +4,7 @@
 [![monitored by greenkeeper.io](https://img.shields.io/badge/greenkeeper.io-monitored-brightgreen.svg)](http://greenkeeper.io/) 
 [![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg)](http://standardjs.com/)
 [![semantic-release](https://img.shields.io/badge/semver-semantic%20release-e10079.svg)](https://github.com/semantic-release/semantic-release)
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/333d70a78d304146ad90944e4a6cf804)](https://www.codacy.com/app/ResourcefulHumans/template-mailer-aws-lambda?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=ResourcefulHumans/template-mailer-aws-lambda&amp;utm_campaign=Badge_Grade)
+[![Code Climate](https://codeclimate.com/github/ResourcefulHumans/template-mailer-aws-lambda/badges/gpa.svg)](https://codeclimate.com/github/ResourcefulHumans/template-mailer-aws-lambda)
 
 [![NPM](https://nodei.co/npm/template-mailer-aws-lambda.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/template-mailer-aws-lambda/)
 
