@@ -122,27 +122,3 @@ it will parsed into
     }
 
 and can be access in the template accordingly.
-
-## Live
-
-:earth_africa: <https://huvg4qxbta.execute-api.eu-central-1.amazonaws.com/prod>
-
-This API is hosted as the [`TemplateMailer2`](https://eu-central-1.console.aws.amazon.com/lambda/home?region=eu-central-1#/functions/TemplateMailer2?tab=code) AWS Lambda function and the HTTP endpoint is provided via the [`TemplateMailer2`](https://eu-central-1.console.aws.amazon.com/apigateway/home?region=eu-central-1#/apis/huvg4qxbta/stages/prod) API Gateway stage. 
-
-The Lambda function uses the role [`template-mailer`](https://console.aws.amazon.com/iam/home?region=eu-central-1#/roles/template-mailer).
-
-### Deployment
-
-Updating live is done via the [`Makefile`](https://github.com/ResourcefulHumans/template-mailer-aws-lambda/blob/master/Makefile).
-
-    make update
-
-It uses the [AWS CLI](https://aws.amazon.com/de/cli/) to update the Lamda function code. `aws` uses [the standard AWS environment variables](http://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html#cli-environment) for authentication:
-
- * `AWS_ACCESS_KEY_ID`  
-   The AWS access key to use
- * `AWS_SECRET_ACCESS_KEY`  
-   The AWS secret access key to use
-
-You can create new AWS keys via [IAM](https://console.aws.amazon.com/iam/home?region=eu-central-1). The new user needs the neccessary permissions to update the lambda function (see above).
-
