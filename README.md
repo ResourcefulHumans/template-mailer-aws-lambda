@@ -1,12 +1,11 @@
 # template-mailer-aws-lambda
 
+[![npm version](https://img.shields.io/npm/v/template-mailer-aws-lambda.svg)](https://www.npmjs.com/package/template-mailer-aws-lambda)
 [![Build Status](https://travis-ci.org/ResourcefulHumans/template-mailer-aws-lambda.svg?branch=master)](https://travis-ci.org/ResourcefulHumans/template-mailer-aws-lambda)
 [![monitored by greenkeeper.io](https://img.shields.io/badge/greenkeeper.io-monitored-brightgreen.svg)](http://greenkeeper.io/) 
 [![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg)](http://standardjs.com/)
 [![semantic-release](https://img.shields.io/badge/semver-semantic%20release-e10079.svg)](https://github.com/semantic-release/semantic-release)
 [![Code Climate](https://codeclimate.com/github/ResourcefulHumans/template-mailer-aws-lambda/badges/gpa.svg)](https://codeclimate.com/github/ResourcefulHumans/template-mailer-aws-lambda)
-
-[![NPM](https://nodei.co/npm/template-mailer-aws-lambda.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/template-mailer-aws-lambda/)
 
 A transactional email mailer that runs on AWS lambda.
 
@@ -16,41 +15,45 @@ A transactional email mailer that runs on AWS lambda.
 
 Create a role for the lambda function in IAM and attach these policies:
 
-  {
-      "Version": "2012-10-17",
-      "Statement": [
-          {
-              "Sid": "Stmt1459942470000",
-              "Effect": "Allow",
-              "Action": [
-                  "s3:*"
-              ],
-              "Resource": [
-                  "arn:aws:s3:::template-mailer/*"
-              ]
-          }
-      ]
-  }
-  
+```json
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "Stmt1459942470000",
+            "Effect": "Allow",
+            "Action": [
+                "s3:*"
+            ],
+            "Resource": [
+                "arn:aws:s3:::template-mailer/*"
+            ]
+        }
+    ]
+}
+```
+
 *Replace `template-mailer` with your bucket name.
 
-  {
-      "Version": "2012-10-17",
-      "Statement": [
-          {
-              "Sid": "Stmt1475239732000",
-              "Effect": "Allow",
-              "Action": [
-                  "ses:SendEmail",
-                  "ses:SendRawEmail"
-              ],
-              "Resource": [
-                  "*"
-              ]
-          }
-      ]
-  }
-  
+```json
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "Stmt1475239732000",
+            "Effect": "Allow",
+            "Action": [
+                "ses:SendEmail",
+                "ses:SendRawEmail"
+            ],
+            "Resource": [
+                "*"
+            ]
+        }
+    ]
+}
+```
+
 ### S3
 
 Create the S3 bucket used by the mailer.
@@ -119,3 +122,27 @@ it will parsed into
     }
 
 and can be access in the template accordingly.
+
+## Live
+
+:earth_africa: <https://huvg4qxbta.execute-api.eu-central-1.amazonaws.com/prod>
+
+This API is hosted as the [`TemplateMailer2`](https://eu-central-1.console.aws.amazon.com/lambda/home?region=eu-central-1#/functions/TemplateMailer2?tab=code) AWS Lambda function and the HTTP endpoint is provided via the [`TemplateMailer2`](https://eu-central-1.console.aws.amazon.com/apigateway/home?region=eu-central-1#/apis/huvg4qxbta/stages/prod) API Gateway stage. 
+
+The Lambda function uses the role [`template-mailer`](https://console.aws.amazon.com/iam/home?region=eu-central-1#/roles/template-mailer).
+
+### Deployment
+
+Updating live is done via the [`Makefile`](https://github.com/ResourcefulHumans/template-mailer-aws-lambda/blob/master/Makefile).
+
+    make update
+
+It uses the [AWS CLI](https://aws.amazon.com/de/cli/) to update the Lamda function code. `aws` uses [the standard AWS environment variables](http://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html#cli-environment) for authentication:
+
+ * `AWS_ACCESS_KEY_ID`  
+   The AWS access key to use
+ * `AWS_SECRET_ACCESS_KEY`  
+   The AWS secret access key to use
+
+You can create new AWS keys via [IAM](https://console.aws.amazon.com/iam/home?region=eu-central-1). The new user needs the neccessary permissions to update the lambda function (see above).
+
