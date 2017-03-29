@@ -7,7 +7,7 @@
 [![semantic-release](https://img.shields.io/badge/semver-semantic%20release-e10079.svg)](https://github.com/semantic-release/semantic-release)
 [![Code Climate](https://codeclimate.com/github/ResourcefulHumans/template-mailer-aws-lambda/badges/gpa.svg)](https://codeclimate.com/github/ResourcefulHumans/template-mailer-aws-lambda)
 
-A transactional email mailer that runs on AWS lambda.
+A transactional email mailer that runs on AWS Lambda and sends emails via AWS SES.
 
 ## Setup
 
@@ -95,6 +95,8 @@ Create the transport `bar`:
     -H 'X-API-Key: ????' \
     -H 'Content-Type: application/vnd.resourceful-humans.template-mailer-aws-lambda.v2+json; charset=utf-8' \
     --data '{"email":"info@example.com","name":"Example Inc."}'
+
+*Note: In order to use the email, you need to configure it in AWS SES.*
 
 Send an email using the transport `bar` and the template `foo`:
     
