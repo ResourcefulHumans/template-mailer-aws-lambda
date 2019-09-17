@@ -101,6 +101,10 @@ const send = (ses, transportRepo, templateRepo, transport, template, body) => {
               Charset: 'UTF-8'
             }
           }
+          const replyTo = v.value.replyTo
+          if (replyTo) {
+            params.ReplyToAddresses = [replyTo]
+          }
           return Promise.promisify(ses.sendEmail, {context: ses})(params)
         })
         .then(function () {
