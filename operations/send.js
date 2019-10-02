@@ -67,7 +67,7 @@ const send = (ses, transportRepo, templateRepo, transport, template, body) => {
             })
             .catch((err) => {
               console.error(err)
-              throw new Error('Failed to render template: "' + v.value.template + '" with data "' + templateData + '"')
+              throw new Error('Failed to render template: "' + v.value.template + '" with data "' + JSON.stringify(templateData) + '"' + ' Message: ' + err.message)
             })
         })
         .then(() => {
