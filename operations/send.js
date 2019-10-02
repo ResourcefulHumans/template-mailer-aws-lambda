@@ -13,7 +13,7 @@ const converter = new showdown.Converter({
 })
 
 const formatContent = (data) => {
-  if (!(typeof data === 'object')) {
+  if (typeof data !== 'object' || data === null) {
     return data
   }
   if (data['@markdown']) {
